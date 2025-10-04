@@ -1,0 +1,5 @@
+# Netlify redirects file
+# This ensures all routes serve the main index.html file
+# Useful for SPA behavior if you add routing later
+
+/*    /index.html   200

@@ -44,7 +44,7 @@ A flexible, modern web-based IoT MQTT monitoring dashboard with fluid animations
 - A web server (or use a simple HTTP server)
 - An MQTT broker (e.g., Mosquitto, HiveMQ, AWS IoT)
 
-### Installation
+### Local Development
 
 1. **Clone or download the project files**
    ```bash
@@ -76,6 +76,84 @@ A flexible, modern web-based IoT MQTT monitoring dashboard with fluid animations
    - Click "Add Panel"
    - Configure your panel settings
    - Click "Create Panel"
+
+## 🌐 Netlify Deployment
+
+### Option 1: Deploy from GitHub (Recommended)
+
+1. **Push your code to GitHub**
+   ```bash
+   git add .
+   git commit -m "Add Netlify deployment configuration"
+   git push origin main
+   ```
+
+2. **Connect to Netlify**
+   - Go to [netlify.com](https://netlify.com) and sign up/login
+   - Click "New site from Git"
+   - Choose "GitHub" and authorize Netlify
+   - Select your repository: `bardirune20ITU/IOT-MQTT-PANEL3`
+
+3. **Configure Build Settings**
+   - **Build command**: Leave empty (static site)
+   - **Publish directory**: `/` (root directory)
+   - **Branch to deploy**: `main`
+
+4. **Deploy**
+   - Click "Deploy site"
+   - Netlify will automatically build and deploy your site
+   - You'll get a URL like `https://your-site-name.netlify.app`
+
+### Option 2: Manual Deploy
+
+1. **Build your site locally**
+   ```bash
+   # No build step needed - it's a static site
+   # Just ensure all files are ready
+   ```
+
+2. **Deploy to Netlify**
+   - Go to [netlify.com](https://netlify.com)
+   - Drag and drop your project folder to the deploy area
+   - Or use Netlify CLI:
+   ```bash
+   npm install -g netlify-cli
+   netlify deploy --prod --dir .
+   ```
+
+### Netlify Configuration
+
+The project includes optimized Netlify configuration:
+
+- **`netlify.toml`**: Main configuration file with headers and redirects
+- **`_redirects`**: Ensures SPA behavior for all routes
+- **Security headers**: CSP, XSS protection, and frame options
+- **Performance**: Caching rules for static assets
+- **MQTT support**: Allows WebSocket connections for MQTT
+
+### Environment Variables (Optional)
+
+For production deployments, you can set environment variables in Netlify:
+
+1. Go to Site settings → Environment variables
+2. Add variables like:
+   - `MQTT_DEFAULT_HOST`: Default MQTT broker URL
+   - `MQTT_DEFAULT_USERNAME`: Default username
+   - `MQTT_DEFAULT_PASSWORD`: Default password
+
+### Custom Domain
+
+1. Go to Site settings → Domain management
+2. Add your custom domain
+3. Configure DNS settings as instructed by Netlify
+4. Enable HTTPS (automatic with Netlify)
+
+### Continuous Deployment
+
+Once connected to GitHub, Netlify will automatically:
+- Deploy when you push to the main branch
+- Show deployment status in pull requests
+- Provide preview deployments for branches
 
 ## Configuration
 
