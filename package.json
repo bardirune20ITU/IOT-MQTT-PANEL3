@@ -1,0 +1,24 @@
+{
+  "name": "iot-mqtt-panel",
+  "version": "1.0.0",
+  "description": "A modern, flexible web-based MQTT dashboard for monitoring and controlling IoT devices",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -o",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "mqtt",
+    "iot",
+    "dashboard",
+    "panel",
+    "monitoring",
+    "websocket",
+    "visualization"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

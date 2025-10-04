@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT MQTT Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <i class="fas fa-project-diagram"></i>
+                <h1>IoT MQTT Panel</h1>
+            </div>
+            <div class="header-center">
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-indicator disconnected"></span>
+                    <span class="status-text">Disconnected</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" id="settingsBtn">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+                <button class="btn btn-success" id="addWidgetBtn">
+                    <i class="fas fa-plus"></i> Add Widget
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard" id="dashboard">
+            <!-- Widgets will be dynamically added here -->
+        </main>
+
+        <!-- Connection Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-cog"></i> MQTT Connection Settings</h2>
+                    <button class="close-btn" data-modal="settingsModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="brokerUrl">Broker URL</label>
+                        <input type="text" id="brokerUrl" placeholder="ws://broker.hivemq.com:8000/mqtt" value="ws://broker.hivemq.com:8000/mqtt">
+                        <small>WebSocket URL (e.g., ws://broker:8000/mqtt or wss://broker:8000/mqtt)</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientId">Client ID</label>
+                        <input type="text" id="clientId" placeholder="mqtt-panel-client">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username">Username (optional)</label>
+                            <input type="text" id="username" placeholder="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password (optional)</label>
+                            <input type="password" id="password" placeholder="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="cleanSession" checked>
+                            Clean Session
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-modal="settingsModal">Cancel</button>
+                    <button class="btn btn-primary" id="connectBtn">Connect</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Widget Modal -->
+        <div class="modal" id="addWidgetModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-plus"></i> Add Widget</h2>
+                    <button class="close-btn" data-modal="addWidgetModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="widget-types">
+                        <div class="widget-type-card" data-type="gauge">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <h3>Gauge</h3>
+                            <p>Display numeric values with a circular gauge</p>
+                        </div>
+                        <div class="widget-type-card" data-type="led">
+                            <i class="fas fa-lightbulb"></i>
+                            <h3>LED Indicator</h3>
+                            <p>Show on/off status with a colored LED</p>
+                        </div>
+                        <div class="widget-type-card" data-type="value">
+                            <i class="fas fa-hashtag"></i>
+                            <h3>Value Display</h3>
+                            <p>Display raw numeric or text values</p>
+                        </div>
+                        <div class="widget-type-card" data-type="switch">
+                            <i class="fas fa-toggle-on"></i>
+                            <h3>Switch</h3>
+                            <p>Control devices with an on/off switch</p>
+                        </div>
+                        <div class="widget-type-card" data-type="chart">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Line Chart</h3>
+                            <p>Display data trends over time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configure Widget Modal -->
+        <div class="modal" id="configWidgetModal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2><i class="fas fa-cog"></i> Configure Widget</h2>
+                    <button class="close-btn" data-modal="configWidgetModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="widgetTitle">Title</label>
+                        <input type="text" id="widgetTitle" placeholder="My Widget">
+                    </div>
+                    <div class="form-group">
+                        <label for="widgetTopic">MQTT Topic</label>
+                        <input type="text" id="widgetTopic" placeholder="sensors/temperature">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="widgetIcon">Icon</label>
+                            <select id="widgetIcon">
+                                <option value="fa-thermometer-half">Thermometer</option>
+                                <option value="fa-lightbulb">Light Bulb</option>
+                                <option value="fa-temperature-high">Temperature</option>
+                                <option value="fa-droplet">Droplet</option>
+                                <option value="fa-wind">Wind</option>
+                                <option value="fa-sun">Sun</option>
+                                <option value="fa-cloud">Cloud</option>
+                                <option value="fa-bolt">Bolt</option>
+                                <option value="fa-fire">Fire</option>
+                                <option value="fa-snowflake">Snowflake</option>
+                                <option value="fa-heart">Heart</option>
+                                <option value="fa-gauge">Gauge</option>
+                                <option value="fa-plug">Plug</option>
+                                <option value="fa-power-off">Power</option>
+                                <option value="fa-fan">Fan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="widgetColor">Color</label>
+                            <input type="color" id="widgetColor" value="#3498db">
+                        </div>
+                    </div>
+                    <div id="widgetSpecificConfig"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" id="deleteWidgetBtn" style="margin-right: auto;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button class="btn btn-secondary" data-modal="configWidgetModal">Cancel</button>
+                    <button class="btn btn-primary" id="saveWidgetBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MQTT.js Library -->
+    <script src="https://unpkg.com/mqtt@5.3.0/dist/mqtt.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

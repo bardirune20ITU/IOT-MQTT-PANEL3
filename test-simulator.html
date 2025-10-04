@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Test Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            color: white;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .info {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid #3498db;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .connection-panel {
+            background: rgba(15, 52, 96, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #2d4059;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        
+        .status.connected {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+        }
+        
+        .status.disconnected {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+        }
+        
+        .simulator-panel {
+            background: rgba(15, 52, 96, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .simulator-controls {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .control-group {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .control-group h3 {
+            margin-bottom: 0.75rem;
+            color: #3498db;
+        }
+        
+        .slider {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        
+        .value-display {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 MQTT Test Simulator</h1>
+        
+        <div class="info">
+            <strong>ℹ️ Info:</strong> This simulator publishes test data to MQTT topics that you can use to test your IoT MQTT Panel dashboard.
+        </div>
+        
+        <div class="connection-panel">
+            <h2>Connection</h2>
+            <div class="form-group">
+                <label for="brokerUrl">Broker URL</label>
+                <input type="text" id="brokerUrl" value="ws://broker.hivemq.com:8000/mqtt">
+            </div>
+            <button class="btn-primary" id="connectBtn">Connect</button>
+            <button class="btn-danger" id="disconnectBtn" style="display: none;">Disconnect</button>
+            <div style="margin-top: 1rem;">
+                <span class="status disconnected" id="status">Disconnected</span>
+            </div>
+        </div>
+        
+        <div class="simulator-panel">
+            <h2>Simulators</h2>
+            <div class="simulator-controls">
+                <!-- Temperature -->
+                <div class="control-group">
+                    <h3>🌡️ Temperature</h3>
+                    <label>Value: <span id="tempValue">23</span>°C</label>
+                    <input type="range" class="slider" id="tempSlider" min="0" max="50" value="23">
+                    <button class="btn-success" onclick="startAutoTemp()">Auto Simulate</button>
+                    <button class="btn-danger" onclick="stopAutoTemp()">Stop</button>
+                </div>
+                
+                <!-- Humidity -->
+                <div class="control-group">
+                    <h3>💧 Humidity</h3>
+                    <label>Value: <span id="humidValue">65</span>%</label>
+                    <input type="range" class="slider" id="humidSlider" min="0" max="100" value="65">
+                    <button class="btn-success" onclick="startAutoHumidity()">Auto Simulate</button>
+                    <button class="btn-danger" onclick="stopAutoHumidity()">Stop</button>
+                </div>
+                
+                <!-- Motion Sensor -->
+                <div class="control-group">
+                    <h3>🏃 Motion Sensor</h3>
+                    <div class="value-display" id="motionValue">OFF</div>
+                    <button class="btn-success" onclick="publishMotion(1)">Trigger Motion</button>
+                    <button class="btn-danger" onclick="publishMotion(0)">Clear Motion</button>
+                    <button class="btn-primary" onclick="startAutoMotion()">Random Motion</button>
+                </div>
+                
+                <!-- Light Control -->
+                <div class="control-group">
+                    <h3>💡 Light Status</h3>
+                    <div class="value-display" id="lightValue">OFF</div>
+                    <button class="btn-success" onclick="publishLight('ON')">Turn ON</button>
+                    <button class="btn-danger" onclick="publishLight('OFF')">Turn OFF</button>
+                </div>
+                
+                <!-- Air Quality -->
+                <div class="control-group">
+                    <h3>💨 Air Quality</h3>
+                    <label>Value: <span id="airValue">150</span> ppm</label>
+                    <input type="range" class="slider" id="airSlider" min="0" max="500" value="150">
+                    <button class="btn-success" onclick="startAutoAir()">Auto Simulate</button>
+                    <button class="btn-danger" onclick="stopAutoAir()">Stop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/mqtt@5.3.0/dist/mqtt.min.js"></script>
+    <script>
+        let client = null;
+        let autoIntervals = {};
+        
+        // Connection
+        document.getElementById('connectBtn').addEventListener('click', connect);
+        document.getElementById('disconnectBtn').addEventListener('click', disconnect);
+        
+        function connect() {
+            const brokerUrl = document.getElementById('brokerUrl').value;
+            client = mqtt.connect(brokerUrl, {
+                clientId: 'mqtt-simulator-' + Math.random().toString(16).substr(2, 8)
+            });
+            
+            client.on('connect', () => {
+                updateStatus(true);
+                // Subscribe to light control topic
+                client.subscribe('home/livingroom/light/set');
+            });
+            
+            client.on('message', (topic, message) => {
+                if (topic === 'home/livingroom/light/set') {
+                    document.getElementById('lightValue').textContent = message.toString();
+                }
+            });
+            
+            client.on('error', () => updateStatus(false));
+            client.on('close', () => updateStatus(false));
+        }
+        
+        function disconnect() {
+            if (client) {
+                client.end();
+                client = null;
+            }
+            updateStatus(false);
+            Object.values(autoIntervals).forEach(clearInterval);
+            autoIntervals = {};
+        }
+        
+        function updateStatus(connected) {
+            const status = document.getElementById('status');
+            status.textContent = connected ? 'Connected' : 'Disconnected';
+            status.className = 'status ' + (connected ? 'connected' : 'disconnected');
+            document.getElementById('connectBtn').style.display = connected ? 'none' : 'inline-block';
+            document.getElementById('disconnectBtn').style.display = connected ? 'inline-block' : 'none';
+        }
+        
+        // Temperature
+        document.getElementById('tempSlider').addEventListener('input', (e) => {
+            const value = e.target.value;
+            document.getElementById('tempValue').textContent = value;
+            publish('home/livingroom/temperature', value);
+        });
+        
+        function startAutoTemp() {
+            stopAutoTemp();
+            autoIntervals.temp = setInterval(() => {
+                const value = (20 + Math.random() * 10).toFixed(1);
+                document.getElementById('tempSlider').value = value;
+                document.getElementById('tempValue').textContent = value;
+                publish('home/livingroom/temperature', value);
+            }, 2000);
+        }
+        
+        function stopAutoTemp() {
+            if (autoIntervals.temp) {
+                clearInterval(autoIntervals.temp);
+                delete autoIntervals.temp;
+            }
+        }
+        
+        // Humidity
+        document.getElementById('humidSlider').addEventListener('input', (e) => {
+            const value = e.target.value;
+            document.getElementById('humidValue').textContent = value;
+            publish('home/livingroom/humidity', value);
+        });
+        
+        function startAutoHumidity() {
+            stopAutoHumidity();
+            autoIntervals.humidity = setInterval(() => {
+                const value = (50 + Math.random() * 30).toFixed(0);
+                document.getElementById('humidSlider').value = value;
+                document.getElementById('humidValue').textContent = value;
+                publish('home/livingroom/humidity', value);
+            }, 3000);
+        }
+        
+        function stopAutoHumidity() {
+            if (autoIntervals.humidity) {
+                clearInterval(autoIntervals.humidity);
+                delete autoIntervals.humidity;
+            }
+        }
+        
+        // Motion
+        function publishMotion(value) {
+            document.getElementById('motionValue').textContent = value ? 'ON' : 'OFF';
+            publish('home/livingroom/motion', value.toString());
+        }
+        
+        function startAutoMotion() {
+            if (autoIntervals.motion) return;
+            autoIntervals.motion = setInterval(() => {
+                const value = Math.random() > 0.7 ? 1 : 0;
+                publishMotion(value);
+            }, 5000);
+        }
+        
+        // Light
+        function publishLight(value) {
+            publish('home/livingroom/light', value);
+            document.getElementById('lightValue').textContent = value;
+        }
+        
+        // Air Quality
+        document.getElementById('airSlider').addEventListener('input', (e) => {
+            const value = e.target.value;
+            document.getElementById('airValue').textContent = value;
+            publish('home/livingroom/airquality', value);
+        });
+        
+        function startAutoAir() {
+            stopAutoAir();
+            autoIntervals.air = setInterval(() => {
+                const value = (100 + Math.random() * 200).toFixed(0);
+                document.getElementById('airSlider').value = value;
+                document.getElementById('airValue').textContent = value;
+                publish('home/livingroom/airquality', value);
+            }, 4000);
+        }
+        
+        function stopAutoAir() {
+            if (autoIntervals.air) {
+                clearInterval(autoIntervals.air);
+                delete autoIntervals.air;
+            }
+        }
+        
+        // Publish helper
+        function publish(topic, message) {
+            if (client && client.connected) {
+                client.publish(topic, message);
+                console.log(`Published to ${topic}: ${message}`);
+            }
+        }
+    </script>
+</body>
+</html>

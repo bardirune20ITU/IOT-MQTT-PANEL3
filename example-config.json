@@ -1,0 +1,76 @@
+{
+  "description": "Example dashboard configuration",
+  "connection": {
+    "brokerUrl": "ws://broker.hivemq.com:8000/mqtt",
+    "clientId": "mqtt-panel-example",
+    "cleanSession": true
+  },
+  "widgets": [
+    {
+      "type": "gauge",
+      "title": "Living Room Temperature",
+      "topic": "home/livingroom/temperature",
+      "icon": "fa-thermometer-half",
+      "color": "#e74c3c",
+      "config": {
+        "min": 0,
+        "max": 50,
+        "unit": "°C"
+      }
+    },
+    {
+      "type": "gauge",
+      "title": "Humidity",
+      "topic": "home/livingroom/humidity",
+      "icon": "fa-droplet",
+      "color": "#3498db",
+      "config": {
+        "min": 0,
+        "max": 100,
+        "unit": "%"
+      }
+    },
+    {
+      "type": "led",
+      "title": "Motion Sensor",
+      "topic": "home/livingroom/motion",
+      "icon": "fa-bolt",
+      "color": "#f39c12",
+      "config": {
+        "onValue": "1"
+      }
+    },
+    {
+      "type": "switch",
+      "title": "Living Room Light",
+      "topic": "home/livingroom/light",
+      "icon": "fa-lightbulb",
+      "color": "#f39c12",
+      "config": {
+        "publishTopic": "home/livingroom/light/set",
+        "onValue": "ON",
+        "offValue": "OFF"
+      }
+    },
+    {
+      "type": "value",
+      "title": "Air Quality",
+      "topic": "home/livingroom/airquality",
+      "icon": "fa-wind",
+      "color": "#1abc9c",
+      "config": {
+        "unit": "ppm"
+      }
+    },
+    {
+      "type": "chart",
+      "title": "Temperature History",
+      "topic": "home/livingroom/temperature",
+      "icon": "fa-chart-line",
+      "color": "#9b59b6",
+      "config": {
+        "maxPoints": 30
+      }
+    }
+  ]
+}
