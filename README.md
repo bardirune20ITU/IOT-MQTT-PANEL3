@@ -46,7 +46,25 @@ A modern, flexible web-based MQTT dashboard for monitoring and controlling IoT d
 - A web browser (Chrome, Firefox, Safari, Edge)
 - An MQTT broker (e.g., Mosquitto, HiveMQ, EMQX)
 
-### Installation
+### Option 1: Deploy to Netlify (Recommended for Production)
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy)
+
+**Quick Deploy**:
+```bash
+# Using Netlify CLI
+npm install -g netlify-cli
+netlify deploy --prod
+```
+
+**Or use Git Integration**:
+1. Push this repository to GitHub
+2. Connect to Netlify
+3. Deploy automatically
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+### Option 2: Local Development
 
 1. **Clone or download this repository**
    ```bash
@@ -85,9 +103,17 @@ A modern, flexible web-based MQTT dashboard for monitoring and controlling IoT d
    - **Clean Session**: Enable/disable clean session
 3. Click **Connect**
 
-**Example Public Brokers** (for testing):
+**Example Public Brokers**:
+
+For local development (HTTP):
 - `ws://broker.hivemq.com:8000/mqtt`
 - `ws://test.mosquitto.org:8080`
+
+For production/HTTPS deployments (like Netlify):
+- `wss://broker.hivemq.com:8884/mqtt` (secure WebSocket)
+- Use a broker that supports WSS (secure WebSocket)
+
+**Important**: HTTPS sites require WSS (secure WebSocket) connections. HTTP sites can use WS.
 
 ### 2. Add Widgets
 

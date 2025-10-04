@@ -160,7 +160,8 @@
             <h2>Connection</h2>
             <div class="form-group">
                 <label for="brokerUrl">Broker URL</label>
-                <input type="text" id="brokerUrl" value="ws://broker.hivemq.com:8000/mqtt">
+                <input type="text" id="brokerUrl" value="ws://broker.hivemq.com:8000/mqtt" placeholder="ws://broker:8000/mqtt or wss://broker:8884/mqtt">
+                <small style="color: rgba(255,255,255,0.6); display: block; margin-top: 0.25rem;">Use ws:// for local, wss:// for HTTPS sites</small>
             </div>
             <button class="btn-primary" id="connectBtn">Connect</button>
             <button class="btn-danger" id="disconnectBtn" style="display: none;">Disconnect</button>
